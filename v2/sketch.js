@@ -1,3 +1,7 @@
+function copyArray(array) {
+  return array.map(row => row.slice());
+}
+
 let sudoku = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
 let possibles = Array.from({ length: 9 }, () => Array.from({ length: 9 }), () => []);
 // Easy sudoku:
@@ -12,9 +16,44 @@ sudoku = [
     [ 5, 7, 0, 1, 0, 0, 2, 0, 8 ],
     [ 3, 0, 6, 0, 0, 0, 0, 0, 0 ]
 ];
+// Extreme sudoku:
+sudoku = [
+    [ 6, 0, 0, 7, 9, 0, 2, 0, 8 ],
+    [ 0, 0, 0, 0, 0, 0, 3, 0, 0 ],
+    [ 0, 4, 0, 6, 0, 0, 0, 0, 0 ],
+    [ 0, 5, 0, 0, 0, 2, 8, 0, 7 ],
+    [ 8, 0, 0, 0, 0, 0, 0, 3, 0 ],
+    [ 0, 0, 0, 0, 7, 0, 0, 4, 0 ],
+    [ 4, 0, 0, 0, 2, 0, 6, 0, 9 ],
+    [ 0, 0, 1, 0, 0, 5, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 7, 0 ]
+];
+const hard = copyArray(sudoku);
 
+let savedStates = [];
 
 let listeningForNumber = false;
+
+
+function backprop() {
+  const { sudoku: prevSudoku, possibles: prevPossibles, i: y, j: x, tried } = savedStates[savedStates.length - 1];
+
+  if (tried.length === prevPossibles[y][x].length) {
+    savedStates.pop();
+    return backprop();
+  }
+
+  let newRandomIndex = 0;
+  while (true) {
+    newRandomIndex = Math.floor(Math.random() * (possibles[y][x].length));
+    if (!tried.includes(newRandomIndex)) break;
+  }
+
+  sudoku = copyArray(prevSudoku);
+  sudoku[y][x] = prevPossibles[y][x][newRandomIndex];
+  savedStates[savedStates.length - 1].tried.push(newRandomIndex);
+  return;
+}
 
 function setup() {
   createCanvas(800, 600);
@@ -24,11 +63,20 @@ function setup() {
 
 function draw() {
   background(0);
-  translate(50, 50)
+  translate(50, 50);
 
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
-     possibles[i][j] = possible(sudoku, i, j);
+      if (sudoku[i][j] !== 0) continue;
+      possibles[i][j] = possible(sudoku, i, j);
+    }
+  }
+
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      if (sudoku[i][j] === 0 && possibles[i][j].length === 0) {
+        return backprop();
+      }
     }
   }
 
@@ -67,8 +115,6 @@ function draw() {
     stroke(255);
     rect(listeningForNumber.j * 500/9, listeningForNumber.i * 500/9, 500/9, 500/9);
   }
-
-
 }
 
 function withInSudoku() {
@@ -127,13 +173,26 @@ function possible(s, i, j) {
   return possible;
 }
 
-function solve() {
+function solve(n) {
+  if (sudoku.every(row => row.every(val => val !== 0))) {
+    console.log("It's solved mate, you can stop now!");
+    return;
+  }
+
+  if (n === undefined) n = 1;
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
-      if (sudoku[i][j] === 0 && possibles[i][j].length === 1) {
-        sudoku[i][j] = possibles[i][j][0];
+      if (sudoku[i][j] === 0 && possibles[i][j].length === n) {
+        let index = Math.floor(Math.random() * (n - 1));
+
+        if (n > 1) {
+          savedStates.push({ sudoku: copyArray(sudoku), possibles: copyArray(possibles), i, j, tried: [index] });
+        }
+        sudoku[i][j] = possibles[i][j][index];
         return;
       }
     }
   }
+
+  return solve(n+1);
 }
