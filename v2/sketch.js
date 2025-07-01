@@ -28,7 +28,7 @@ sudoku = [
     [ 0, 0, 1, 0, 0, 5, 0, 0, 0 ],
     [ 0, 0, 0, 0, 0, 0, 0, 7, 0 ]
 ];
-// Supposedly un-bruteforceable:
+// Supposedly un-bruteforceable (btw, it did manage to solve it, took it like 9~10 mins):
 sudoku = [
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
     [ 0, 0, 0, 0, 0, 3, 0, 8, 5 ],
