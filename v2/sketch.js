@@ -28,11 +28,25 @@ sudoku = [
     [ 0, 0, 1, 0, 0, 5, 0, 0, 0 ],
     [ 0, 0, 0, 0, 0, 0, 0, 7, 0 ]
 ];
+// Supposedly un-bruteforceable:
+sudoku = [
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 3, 0, 8, 5 ],
+    [ 0, 0, 1, 0, 2, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 5, 0, 7, 0, 0, 0 ],
+    [ 0, 0, 4, 0, 0, 0, 1, 0, 0 ],
+    [ 0, 9, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 5, 0, 0, 0, 0, 0, 0, 7, 3 ],
+    [ 0, 0, 2, 0, 1, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 4, 0, 0, 0, 9 ]
+];
 const hard = copyArray(sudoku);
 
 let savedStates = [];
 
 let listeningForNumber = false;
+
+let solving = false;
 
 
 function backprop() {
@@ -115,6 +129,8 @@ function draw() {
     stroke(255);
     rect(listeningForNumber.j * 500/9, listeningForNumber.i * 500/9, 500/9, 500/9);
   }
+
+  if (solving) solve();
 }
 
 function withInSudoku() {
@@ -141,7 +157,8 @@ function keyPressed() {
   }
 
   if (key === " ") {
-    solve();
+    // solve();
+    solving = !solving;
   }
 }
 
