@@ -81,8 +81,8 @@ function backprop() {
 }
 
 function setup() {
-  createCanvas(800, 600);
-  textFont('Courier New');
+  createCanvas(600, 600);
+  textFont("Courier New");
   textAlign(CENTER, CENTER);
 }
 
@@ -119,7 +119,7 @@ function draw() {
     for (let j = 0; j < 9; j++) {
       textSize(30);
       text(
-        sudoku[i][j] !== 0 ? sudoku[i][j] : '',
+        sudoku[i][j] !== 0 ? sudoku[i][j] : "",
         250 / 9 + (j * 500) / 9,
         250 / 9 + (i * 500) / 9,
       );
@@ -183,11 +183,11 @@ function keyPressed() {
     listeningForNumber = false;
   }
 
-  if (key === 's') {
+  if (key === "s") {
     console.log(sudoku);
   }
 
-  if (key === ' ') {
+  if (key === " ") {
     // solve();
     solving = !solving;
   }
